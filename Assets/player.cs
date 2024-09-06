@@ -8,10 +8,16 @@ public class Player : MonoBehaviour
     [SerializeField] private float jumpForce;
 
     [Header("Dash Info")] 
-    [SerializeField] private float dashDuration;
-    [SerializeField] private float dashTime;
+    [SerializeField] private float dashDuration; 
     [SerializeField] private float  dashSpeed;
+    [SerializeField] private float _dashTime;
     
+    [SerializeField] private float dashCooldown;
+    [SerializeField]private float _dashCooldownTime;
+
+    [Header("Attack Info")] 
+    private bool _isAttacking;
+    private int _comboCounter;
 
     private float _xInput;
     private int _facingDirection = 1;
@@ -38,20 +44,17 @@ public class Player : MonoBehaviour
         CheckInput();
 
         CollisionChecks();
-        dashTime -= Time.deltaTime; //Time.deltaTime: time from last frame 
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            dashTime = dashDuration;
-        }
-        if (dashTime > 0)
-        {
-            Debug.Log("doing dash ability");
-        }
+        _dashTime -= Time.deltaTime; //Time.deltaTime: time from last frame 
+        _dashCooldownTime -= Time.deltaTime;
         
         FlipController();
         AnimatorControllers();
 
+    }
+
+    public void AttackOver()
+    {
+        _isAttacking = false;
     }
 
     private void CollisionChecks()
@@ -63,15 +66,32 @@ public class Player : MonoBehaviour
     {
         _xInput = Input.GetAxisRaw("Horizontal");
 
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            _isAttacking = true;
+        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            DashAbility();
+        }
     }
 
+    private void DashAbility()
+    {
+        if (_dashCooldownTime < 0)
+        {
+            _dashCooldownTime = dashCooldown;
+            _dashTime = dashDuration;
+        }
+    }
+    
     private void Movement()
     {
-        if (dashTime > 0)
+        if (_dashTime > 0)
         {
             _rb.velocity = new Vector2(_xInput * dashSpeed,0);
         }
@@ -93,12 +113,14 @@ public class Player : MonoBehaviour
     private void AnimatorControllers()
     {
         bool isMoving = _rb.velocity.x !=0;
-        bool isDashing = dashTime > 0;
+        bool isDashing = _dashTime > 0;
         
         _anim.SetFloat("yVelocity", _rb.velocity.y);
         _anim.SetBool("isMoving", isMoving);
         _anim.SetBool("isGrounded", _isGrounded);
         _anim.SetBool("isDashing", isDashing);
+        _anim.SetBool("isAttavking",_isAttacking);
+        _anim.SetInteger("comboCounter", _comboCounter);
   
     }
 
