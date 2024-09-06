@@ -9,15 +9,19 @@ public class Player : MonoBehaviour
 
     [Header("Dash Info")] 
     [SerializeField] private float dashDuration; 
-    [SerializeField] private float  dashSpeed;
+    [SerializeField] private float dashSpeed;
     [SerializeField] private float _dashTime;
     
     [SerializeField] private float dashCooldown;
     [SerializeField]private float _dashCooldownTime;
 
     [Header("Attack Info")] 
+    [SerializeField] private float comboTimer; 
+    private float _comboTimeWindow;
     private bool _isAttacking;
     private int _comboCounter;
+    
+    
 
     private float _xInput;
     private int _facingDirection = 1;
@@ -47,6 +51,7 @@ public class Player : MonoBehaviour
         _dashTime -= Time.deltaTime; //Time.deltaTime: time from last frame 
         _dashCooldownTime -= Time.deltaTime;
         
+        
         FlipController();
         AnimatorControllers();
 
@@ -55,6 +60,14 @@ public class Player : MonoBehaviour
     public void AttackOver()
     {
         _isAttacking = false;
+        
+        _comboCounter++;
+
+        if (_comboCounter > 2)
+        {
+            _comboCounter = 0;
+        }
+        
     }
 
     private void CollisionChecks()
@@ -68,7 +81,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            _isAttacking = true;
+            StartAttackEvent();
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -78,6 +91,21 @@ public class Player : MonoBehaviour
         {
             DashAbility();
         }
+    }
+
+    private void StartAttackEvent()
+    {
+        if (!_isGrounded)
+        {
+            return;
+        }
+        if (_comboTimeWindow < 0)
+        {
+            _comboCounter = 0;
+        }
+            
+        _isAttacking = true;
+        _comboTimeWindow = comboTimer;
     }
 
     private void DashAbility()
@@ -91,9 +119,13 @@ public class Player : MonoBehaviour
     
     private void Movement()
     {
-        if (_dashTime > 0)
+        if (_isAttacking)
         {
-            _rb.velocity = new Vector2(_xInput * dashSpeed,0);
+            _rb.velocity = new Vector2(0,0);
+        }
+        else if (_dashTime > 0)
+        {
+            _rb.velocity = new Vector2(_facingDirection * dashSpeed,0);
         }
         else
         {
@@ -104,7 +136,7 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
-        if (_isGrounded)
+        if (_isGrounded && !_isAttacking)
         { 
             _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
         }
@@ -119,7 +151,7 @@ public class Player : MonoBehaviour
         _anim.SetBool("isMoving", isMoving);
         _anim.SetBool("isGrounded", _isGrounded);
         _anim.SetBool("isDashing", isDashing);
-        _anim.SetBool("isAttavking",_isAttacking);
+        _anim.SetBool("isAttacking",_isAttacking);
         _anim.SetInteger("comboCounter", _comboCounter);
   
     }
