@@ -1,9 +1,8 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour 
+public class Player : Entity 
 {
-    private Rigidbody2D _rb;
-    private Animator _anim;
+    [Header("Move Info")] 
     [SerializeField] private float  moveSpeed;
     [SerializeField] private float jumpForce;
 
@@ -24,30 +23,22 @@ public class Player : MonoBehaviour
     
 
     private float _xInput;
-    private int _facingDirection = 1;
-    private bool _facingRight = true;
-
-    [Header("Collision info")]
-    [SerializeField] private float groundCheckDistance;
-    [SerializeField] private LayerMask whatIsGround; 
-    private bool _isGrounded; 
-    
    
     
-    // Start is called before the first frame update
-    void Start()
+
+    protected override void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
-        _anim = GetComponentInChildren<Animator>();
+        base.Start();
+        
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {  
+        base.Update();
         Movement();
         CheckInput();
-
-        CollisionChecks();
+        
         _dashTime -= Time.deltaTime; //Time.deltaTime: time from last frame 
         _dashCooldownTime -= Time.deltaTime;
         
@@ -69,11 +60,7 @@ public class Player : MonoBehaviour
         }
         
     }
-
-    private void CollisionChecks()
-    {
-        _isGrounded= Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance,whatIsGround);
-    }
+    
 
     private void CheckInput()
     {
@@ -155,13 +142,7 @@ public class Player : MonoBehaviour
         _anim.SetInteger("comboCounter", _comboCounter);
   
     }
-
-    private void Flip()
-    {
-        _facingDirection = _facingDirection * -1;
-        _facingRight = !_facingRight; 
-        transform.Rotate(0,180,0);
-    }
+    
 
     private void FlipController()
     {
@@ -176,9 +157,5 @@ public class Player : MonoBehaviour
             Flip();
         }
     }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(transform.position,new Vector3(transform.position.x,transform.position.y-groundCheckDistance,whatIsGround));
-    }
+    
 }
