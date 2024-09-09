@@ -2,17 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerGroundState : MonoBehaviour
+public class PlayerGroundState : PlayerState
 {
-    // Start is called before the first frame update
-    void Start()
+    public PlayerGroundState(PlayerStateMachine stateMachine, Player player, string animBoolName) : base(stateMachine, player, animBoolName)
     {
-        
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Enter()
     {
-        
+        base.Enter();
+    }
+
+    public override void Update()
+    {
+        base.Update();
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
     }
 }

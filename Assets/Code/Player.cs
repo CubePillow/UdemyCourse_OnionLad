@@ -144,7 +144,6 @@ public class Player : Entity
         bool isDashing = _dashTime > 0;
         
         anim.SetFloat("yVelocity", rb.velocity.y);
-        anim.SetBool("isGrounded", _isGrounded);
         anim.SetBool("isDashing", isDashing);
         anim.SetBool("isAttacking",_isAttacking);
         anim.SetInteger("comboCounter", _comboCounter);
