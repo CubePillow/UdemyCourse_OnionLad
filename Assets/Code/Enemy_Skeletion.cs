@@ -12,7 +12,7 @@ public class Enemy_Skeletion : Entity
     [Header("Player detection")]
     [SerializeField] protected float playerCheckDistance;
     [SerializeField] protected LayerMask whatIsPlayer;
-    protected RaycastHit2D _isPlayerDetected;
+    private RaycastHit2D _isPlayerDetected;
     
 
     // Start is called before the first frame update
