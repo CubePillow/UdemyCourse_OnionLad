@@ -13,14 +13,24 @@ public class Entity : MonoBehaviour
     [Header("Collision info")] 
     [SerializeField] protected Transform groundCheckpoint;
     [SerializeField] protected float groundCheckDistance;
-    [SerializeField] protected LayerMask whatIsGround; 
+    [SerializeField] protected LayerMask whatIsGround;
+    [Space]
+    [SerializeField] protected Transform wallCheckpoint;
+    [SerializeField] protected float wallCheckDistance;
+    
     protected bool _isGrounded;
+    protected bool _isWallDetected;
     
     // Start is called before the first frame update
     protected virtual void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _anim = GetComponentInChildren<Animator>();
+
+        if (wallCheckpoint == null)
+        {
+            wallCheckpoint = transform;
+        }
 
     }
 
@@ -33,6 +43,7 @@ public class Entity : MonoBehaviour
     protected virtual void CollisionChecks()
     {
         _isGrounded= Physics2D.Raycast(groundCheckpoint.position, Vector2.down, groundCheckDistance,whatIsGround);
+        _isWallDetected =  Physics2D.Raycast(wallCheckpoint.position, Vector2.right, wallCheckDistance,whatIsGround);
     }
     
     protected virtual void Flip()
@@ -45,5 +56,7 @@ public class Entity : MonoBehaviour
     protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheckpoint.position,new Vector3(groundCheckpoint.position.x,groundCheckpoint.position.y-groundCheckDistance));
+        Gizmos.DrawLine(wallCheckpoint.position,new Vector3(wallCheckpoint.position.x + wallCheckDistance*_facingDirection,wallCheckpoint.position.y));
     }
+    
 }
