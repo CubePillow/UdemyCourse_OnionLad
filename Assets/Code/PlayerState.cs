@@ -29,6 +29,7 @@ public class PlayerState
     {
         Debug.Log("I in " + animBoolName);
         _xInput = Input.GetAxisRaw("Horizontal");
+        player.anim.SetFloat("yVelocity", rb.velocity.y);
         
     }
     public virtual void Exit()

@@ -23,7 +23,7 @@ public class Entity : MonoBehaviour
     [SerializeField] protected Transform wallCheckpoint;
     [SerializeField] protected float wallCheckDistance;
     
-    protected bool _isGrounded;
+    public bool _isGrounded { get; private set; }
     protected bool _isWallDetected;
     
     // Start is called before the first frame update

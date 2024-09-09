@@ -7,12 +7,14 @@ public class Player : Entity
     public PlayerStateMachine stateMachine { get; private set; }
     public PlayerIdleState idleState{ get; private set; }
     public PlayerMoveState moveState { get; private set; }
+    public PlayerJumpState jumpState{ get; private set; }
+    public PlayerAirState airState { get; private set; }
     #endregion
    
 
     [Header("Move Info")] 
     public float moveSpeed;
-    [SerializeField] private float jumpForce;
+    public float jumpForce;
 
     [Header("Dash Info")] 
     [SerializeField] private float dashDuration; 
@@ -34,6 +36,8 @@ public class Player : Entity
         stateMachine = new PlayerStateMachine();
         idleState = new PlayerIdleState(stateMachine,this,"idle");
         moveState = new PlayerMoveState(stateMachine, this, "move");
+        jumpState = new PlayerJumpState(stateMachine,this,"jump");
+        airState = new PlayerAirState(stateMachine, this, "jump");
     }
     
  
@@ -48,7 +52,7 @@ public class Player : Entity
     {  
         base.Update();
         stateMachine.currentState.Update();
-        Movement();
+        
         CheckInput();
         
         _dashTime -= Time.deltaTime; //Time.deltaTime: time from last frame 
@@ -77,15 +81,9 @@ public class Player : Entity
 
     private void CheckInput()
     {
-       
-
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             StartAttackEvent();
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Jump();
         }
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -129,21 +127,12 @@ public class Player : Entity
         }
         
     }
-
-    private void Jump()
-    {
-        if (_isGrounded && !_isAttacking)
-        { 
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-        }
-    }
+    
 
     private void AnimatorControllers()
     {
-        bool isMoving = rb.velocity.x !=0;
         bool isDashing = _dashTime > 0;
         
-        anim.SetFloat("yVelocity", rb.velocity.y);
         anim.SetBool("isDashing", isDashing);
         anim.SetBool("isAttacking",_isAttacking);
         anim.SetInteger("comboCounter", _comboCounter);
