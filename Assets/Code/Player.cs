@@ -11,6 +11,7 @@ public class Player : Entity
     public PlayerAirState airState { get; private set; }
     public PlayerDashState dashState { get; private set; }
     public PlayerWallSlideState wallSlideState { get; private set; }
+    public PlayerWallJumpState wallJumpState { get; private set; }
     #endregion
    
 
@@ -25,6 +26,8 @@ public class Player : Entity
     public float dashSpeed;
     public float dashDirection { get; private set; }
   
+    [Header("Wall Jump Info")] 
+    public float wallJumpDuration; 
 
     [Header("Attack Info")] 
     [SerializeField] private float comboTimer; 
@@ -42,6 +45,7 @@ public class Player : Entity
         airState = new PlayerAirState(stateMachine, this, "jump");
         dashState = new PlayerDashState(stateMachine, this, "dash");
         wallSlideState = new PlayerWallSlideState(stateMachine, this, "wallSlide");
+        wallJumpState = new PlayerWallJumpState(stateMachine, this, "Jump");
     }
     
  
@@ -84,6 +88,10 @@ public class Player : Entity
 
     private void CheckDashInput()
     {
+        if (isWallDetected())
+        {
+            return;
+        }
         dashUasgaeTimer -= Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashUasgaeTimer<0)
         {
