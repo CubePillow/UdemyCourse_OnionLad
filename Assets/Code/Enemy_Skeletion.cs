@@ -29,7 +29,7 @@ public class Enemy_Skeletion : Entity
         {
             if (_isPlayerDetected.distance > 1)
             {
-                _rb.velocity = new Vector2(moveSpeed *1.5f* _facingDirection, _rb.velocity.y);
+                rb.velocity = new Vector2(moveSpeed *1.5f* _facingDirection, rb.velocity.y);
                 Debug.Log("i see the player");
                 _isAttackting = false;
             }
@@ -51,7 +51,7 @@ public class Enemy_Skeletion : Entity
     {
         if (!_isAttackting)
         {
-            _rb.velocity = new Vector2(moveSpeed * _facingDirection, _rb.velocity.y); 
+            rb.velocity = new Vector2(moveSpeed * _facingDirection, rb.velocity.y); 
         }
     }
 

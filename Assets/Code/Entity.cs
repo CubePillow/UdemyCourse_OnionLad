@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    protected Rigidbody2D _rb;
-    protected Animator _anim;
+    #region Components
+
+    public Rigidbody2D rb { get; private set; }
+    public Animator anim { get; private set; }
+
+    #endregion
     
+
     protected int _facingDirection = 1;
     protected bool _facingRight = true;
 
@@ -24,8 +29,8 @@ public class Entity : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
-        _anim = GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponentInChildren<Animator>();
 
         if (wallCheckpoint == null)
         {

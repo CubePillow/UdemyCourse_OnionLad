@@ -3,12 +3,15 @@ using UnityEngine;
 
 public class Player : Entity 
 {
+    #region States
     public PlayerStateMachine stateMachine { get; private set; }
     public PlayerIdleState idleState{ get; private set; }
     public PlayerMoveState moveState { get; private set; }
+    #endregion
+   
 
     [Header("Move Info")] 
-    [SerializeField] private float  moveSpeed;
+    public float moveSpeed;
     [SerializeField] private float jumpForce;
 
     [Header("Dash Info")] 
@@ -25,19 +28,15 @@ public class Player : Entity
     private bool _isAttacking;
     private int _comboCounter;
     
-    
-
-    private float _xInput;
-
 
     private void Awake()
     {
         stateMachine = new PlayerStateMachine();
-        idleState = new PlayerIdleState(stateMachine,this,"Idle");
-        moveState = new PlayerMoveState(stateMachine, this, "Move");
+        idleState = new PlayerIdleState(stateMachine,this,"idle");
+        moveState = new PlayerMoveState(stateMachine, this, "move");
     }
     
-
+ 
     protected override void Start()
     {
         base.Start();
@@ -60,6 +59,7 @@ public class Player : Entity
         AnimatorControllers();
 
     }
+    
 
     public void AttackOver()
     {
@@ -77,7 +77,7 @@ public class Player : Entity
 
     private void CheckInput()
     {
-        _xInput = Input.GetAxisRaw("Horizontal");
+       
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
@@ -121,15 +121,11 @@ public class Player : Entity
     {
         if (_isAttacking)
         {
-            _rb.velocity = new Vector2(0,0);
+            rb.velocity = new Vector2(0,0);
         }
         else if (_dashTime > 0)
         {
-            _rb.velocity = new Vector2(_facingDirection * dashSpeed,0);
-        }
-        else
-        {
-            _rb.velocity = new Vector2(_xInput * moveSpeed,_rb.velocity.y);
+            rb.velocity = new Vector2(_facingDirection * dashSpeed,0);
         }
         
     }
@@ -138,21 +134,20 @@ public class Player : Entity
     {
         if (_isGrounded && !_isAttacking)
         { 
-            _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
     }
 
     private void AnimatorControllers()
     {
-        bool isMoving = _rb.velocity.x !=0;
+        bool isMoving = rb.velocity.x !=0;
         bool isDashing = _dashTime > 0;
         
-        _anim.SetFloat("yVelocity", _rb.velocity.y);
-        _anim.SetBool("isMoving", isMoving);
-        _anim.SetBool("isGrounded", _isGrounded);
-        _anim.SetBool("isDashing", isDashing);
-        _anim.SetBool("isAttacking",_isAttacking);
-        _anim.SetInteger("comboCounter", _comboCounter);
+        anim.SetFloat("yVelocity", rb.velocity.y);
+        anim.SetBool("isGrounded", _isGrounded);
+        anim.SetBool("isDashing", isDashing);
+        anim.SetBool("isAttacking",_isAttacking);
+        anim.SetInteger("comboCounter", _comboCounter);
   
     }
     
@@ -160,15 +155,20 @@ public class Player : Entity
     private void FlipController()
     {
         //moving right and not facing right 
-        if (_rb.velocity.x > 0 && !_facingRight)
+        if (rb.velocity.x > 0 && !_facingRight)
         {
             Flip();
         }
         //moving left and not facing left
-        else if (_rb.velocity.x<0 && _facingRight) 
+        else if (rb.velocity.x<0 && _facingRight) 
         {
             Flip();
         }
+    }
+    
+    public void SetVelocity(float xVelocity, float yVelocity)
+    {
+        rb.velocity = new Vector2(xVelocity, yVelocity);
     }
     
 }
