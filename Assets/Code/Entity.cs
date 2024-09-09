@@ -58,5 +58,5 @@ public class Entity : MonoBehaviour
     }
     
     public bool isGroundDetected() => Physics2D.Raycast(groundCheckpoint.position, Vector2.down, groundCheckDistance,whatIsGround);
-    public bool isWallDetected() => Physics2D.Raycast(wallCheckpoint.position, Vector2.right, wallCheckDistance,whatIsGround);
+    public bool isWallDetected() => Physics2D.Raycast(wallCheckpoint.position, Vector2.right*facingDirection, wallCheckDistance,whatIsGround);
 }

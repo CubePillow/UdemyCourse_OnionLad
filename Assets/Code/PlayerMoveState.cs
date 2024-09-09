@@ -16,8 +16,8 @@ public class PlayerMoveState : PlayerGroundState
     public override void Update()
     {
         base.Update();
-        player.SetVelocity(_xInput*player.moveSpeed,rb.velocity.y);
-        if (_xInput == 0)
+        player.SetVelocity(xInput*player.moveSpeed,rb.velocity.y);
+        if (xInput == 0)
         {
             stateMachine.ChangeState(player.idleState);
         }

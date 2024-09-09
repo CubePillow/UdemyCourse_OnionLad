@@ -10,6 +10,7 @@ public class Player : Entity
     public PlayerJumpState jumpState{ get; private set; }
     public PlayerAirState airState { get; private set; }
     public PlayerDashState dashState { get; private set; }
+    public PlayerWallSlideState wallSlideState { get; private set; }
     #endregion
    
 
@@ -40,6 +41,7 @@ public class Player : Entity
         jumpState = new PlayerJumpState(stateMachine,this,"jump");
         airState = new PlayerAirState(stateMachine, this, "jump");
         dashState = new PlayerDashState(stateMachine, this, "dash");
+        wallSlideState = new PlayerWallSlideState(stateMachine, this, "wallSlide");
     }
     
  

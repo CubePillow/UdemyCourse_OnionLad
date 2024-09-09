@@ -22,6 +22,7 @@ public class PlayerJumpState : PlayerState
             stateMachine.ChangeState(player.airState);
         }
         
+        
     }
 
     public override void Exit()
