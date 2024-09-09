@@ -1,7 +1,12 @@
+using System;
 using UnityEngine;
 
 public class Player : Entity 
 {
+    public PlayerStateMachine stateMachine { get; private set; }
+    public PlayerIdleState idleState{ get; private set; }
+    public PlayerMoveState moveState { get; private set; }
+
     [Header("Move Info")] 
     [SerializeField] private float  moveSpeed;
     [SerializeField] private float jumpForce;
@@ -23,19 +28,27 @@ public class Player : Entity
     
 
     private float _xInput;
-   
+
+
+    private void Awake()
+    {
+        stateMachine = new PlayerStateMachine();
+        idleState = new PlayerIdleState(stateMachine,this,"Idle");
+        moveState = new PlayerMoveState(stateMachine, this, "Move");
+    }
     
 
     protected override void Start()
     {
         base.Start();
-        
+        stateMachine.Initialize(idleState);
     }
 
     // Update is called once per frame
     protected override void Update()
     {  
         base.Update();
+        stateMachine.currentState.Update();
         Movement();
         CheckInput();
         
