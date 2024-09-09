@@ -9,6 +9,7 @@ public class Player : Entity
     public PlayerMoveState moveState { get; private set; }
     public PlayerJumpState jumpState{ get; private set; }
     public PlayerAirState airState { get; private set; }
+    public PlayerDashState dashState { get; private set; }
     #endregion
    
 
@@ -17,12 +18,12 @@ public class Player : Entity
     public float jumpForce;
 
     [Header("Dash Info")] 
-    [SerializeField] private float dashDuration; 
-    [SerializeField] private float dashSpeed;
-    [SerializeField] private float _dashTime;
-    
     [SerializeField] private float dashCooldown;
-    [SerializeField]private float _dashCooldownTime;
+    [SerializeField] private float dashUasgaeTimer; 
+    public float dashDuration; 
+    public float dashSpeed;
+    public float dashDirection { get; private set; }
+  
 
     [Header("Attack Info")] 
     [SerializeField] private float comboTimer; 
@@ -38,6 +39,7 @@ public class Player : Entity
         moveState = new PlayerMoveState(stateMachine, this, "move");
         jumpState = new PlayerJumpState(stateMachine,this,"jump");
         airState = new PlayerAirState(stateMachine, this, "jump");
+        dashState = new PlayerDashState(stateMachine, this, "dash");
     }
     
  
@@ -52,16 +54,7 @@ public class Player : Entity
     {  
         base.Update();
         stateMachine.currentState.Update();
-        
-        CheckInput();
-        
-        _dashTime -= Time.deltaTime; //Time.deltaTime: time from last frame 
-        _dashCooldownTime -= Time.deltaTime;
-        
-        
-        FlipController();
-        AnimatorControllers();
-
+        CheckDashInput();
     }
     
 
@@ -85,15 +78,26 @@ public class Player : Entity
         {
             StartAttackEvent();
         }
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+    }
+
+    private void CheckDashInput()
+    {
+        dashUasgaeTimer -= Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashUasgaeTimer<0)
         {
-            DashAbility();
+            dashUasgaeTimer = dashCooldown;
+            dashDirection = Input.GetAxisRaw("Horizontal");
+            if (dashDirection == 0)
+            {
+                dashDirection = facingDirection;
+            }
+            stateMachine.ChangeState(dashState);
         }
     }
 
     private void StartAttackEvent()
     {
-        if (!_isGrounded)
+        if (isGroundDetected())
         {
             return;
         }
@@ -105,50 +109,26 @@ public class Player : Entity
         _isAttacking = true;
         _comboTimeWindow = comboTimer;
     }
-
-    private void DashAbility()
-    {
-        if (_dashCooldownTime < 0)
-        {
-            _dashCooldownTime = dashCooldown;
-            _dashTime = dashDuration;
-        }
-    }
-    
-    private void Movement()
-    {
-        if (_isAttacking)
-        {
-            rb.velocity = new Vector2(0,0);
-        }
-        else if (_dashTime > 0)
-        {
-            rb.velocity = new Vector2(_facingDirection * dashSpeed,0);
-        }
-        
-    }
     
 
     private void AnimatorControllers()
     {
-        bool isDashing = _dashTime > 0;
         
-        anim.SetBool("isDashing", isDashing);
         anim.SetBool("isAttacking",_isAttacking);
         anim.SetInteger("comboCounter", _comboCounter);
   
     }
     
 
-    private void FlipController()
+    private void FlipController(float x)
     {
         //moving right and not facing right 
-        if (rb.velocity.x > 0 && !_facingRight)
+        if (x > 0 && !facingRight)
         {
             Flip();
         }
         //moving left and not facing left
-        else if (rb.velocity.x<0 && _facingRight) 
+        else if (x <0 && facingRight) 
         {
             Flip();
         }
@@ -157,6 +137,7 @@ public class Player : Entity
     public void SetVelocity(float xVelocity, float yVelocity)
     {
         rb.velocity = new Vector2(xVelocity, yVelocity);
+        FlipController(xVelocity);
     }
     
 }

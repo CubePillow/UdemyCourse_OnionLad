@@ -230,6 +230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a42e1963fa3f4bac84a1d989b3e26c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  facingDirection: 1
+  facingRight: 1
   groundCheckpoint: {fileID: 1852240975}
   groundCheckDistance: 0.24
   whatIsGround:
@@ -239,11 +241,10 @@ MonoBehaviour:
   wallCheckDistance: 0.45
   moveSpeed: 7
   jumpForce: 12
+  dashCooldown: 1
+  dashUasgaeTimer: 0
   dashDuration: 0.2
   dashSpeed: 20
-  _dashTime: 0
-  dashCooldown: 1.4
-  _dashCooldownTime: 0
   comboTimer: 0.3
 --- !u!70 &245848370
 CapsuleCollider2D:
@@ -391,6 +392,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d179ea77ac7a4d72862642066757219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  facingDirection: 1
+  facingRight: 1
   groundCheckpoint: {fileID: 191677584}
   groundCheckDistance: 0.2
   whatIsGround:

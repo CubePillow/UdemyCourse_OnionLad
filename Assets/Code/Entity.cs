@@ -10,10 +10,9 @@ public class Entity : MonoBehaviour
     public Animator anim { get; private set; }
 
     #endregion
-    
 
-    protected int _facingDirection = 1;
-    protected bool _facingRight = true;
+    public int facingDirection = 1;
+    public bool facingRight = true;
 
     [Header("Collision info")] 
     [SerializeField] protected Transform groundCheckpoint;
@@ -23,8 +22,6 @@ public class Entity : MonoBehaviour
     [SerializeField] protected Transform wallCheckpoint;
     [SerializeField] protected float wallCheckDistance;
     
-    public bool _isGrounded { get; private set; }
-    protected bool _isWallDetected;
     
     // Start is called before the first frame update
     protected virtual void Start()
@@ -42,26 +39,24 @@ public class Entity : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        CollisionChecks();
+        
     }
     
-    protected virtual void CollisionChecks()
-    {
-        _isGrounded= Physics2D.Raycast(groundCheckpoint.position, Vector2.down, groundCheckDistance,whatIsGround);
-        _isWallDetected =  Physics2D.Raycast(wallCheckpoint.position, Vector2.right, wallCheckDistance,whatIsGround);
-    }
+    
     
     protected virtual void Flip()
     {
-        _facingDirection = _facingDirection * -1;
-        _facingRight = !_facingRight; 
+        facingDirection = facingDirection * -1;
+        facingRight = !facingRight; 
         transform.Rotate(0,180,0);
     }
     
     protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheckpoint.position,new Vector3(groundCheckpoint.position.x,groundCheckpoint.position.y-groundCheckDistance));
-        Gizmos.DrawLine(wallCheckpoint.position,new Vector3(wallCheckpoint.position.x + wallCheckDistance*_facingDirection,wallCheckpoint.position.y));
+        Gizmos.DrawLine(wallCheckpoint.position,new Vector3(wallCheckpoint.position.x + wallCheckDistance*facingDirection,wallCheckpoint.position.y));
     }
     
+    public bool isGroundDetected() => Physics2D.Raycast(groundCheckpoint.position, Vector2.down, groundCheckDistance,whatIsGround);
+    public bool isWallDetected() => Physics2D.Raycast(wallCheckpoint.position, Vector2.right, wallCheckDistance,whatIsGround);
 }

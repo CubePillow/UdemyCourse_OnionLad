@@ -29,7 +29,7 @@ public class Enemy_Skeletion : Entity
         {
             if (_isPlayerDetected.distance > 1)
             {
-                rb.velocity = new Vector2(moveSpeed *1.5f* _facingDirection, rb.velocity.y);
+                rb.velocity = new Vector2(moveSpeed *1.5f* facingDirection, rb.velocity.y);
                 Debug.Log("i see the player");
                 _isAttackting = false;
             }
@@ -39,7 +39,7 @@ public class Enemy_Skeletion : Entity
                 _isAttackting = true;
             }
         }
-        if (!_isGrounded|| _isWallDetected)
+        if (!isGroundDetected()|| isWallDetected())
         {
             Flip();
         }
@@ -51,14 +51,13 @@ public class Enemy_Skeletion : Entity
     {
         if (!_isAttackting)
         {
-            rb.velocity = new Vector2(moveSpeed * _facingDirection, rb.velocity.y); 
+            rb.velocity = new Vector2(moveSpeed * facingDirection, rb.velocity.y); 
         }
     }
 
-    protected override void CollisionChecks()
+    protected void CollisionChecks()
     {
-        base.CollisionChecks();
-        _isPlayerDetected = Physics2D.Raycast(transform.position, Vector2.right, playerCheckDistance * _facingDirection,
+        _isPlayerDetected = Physics2D.Raycast(transform.position, Vector2.right, playerCheckDistance * facingDirection,
             whatIsPlayer);
 
     }
@@ -68,6 +67,6 @@ public class Enemy_Skeletion : Entity
         base.OnDrawGizmos();
         
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position,new Vector3(transform.position.x + playerCheckDistance* _facingDirection,transform.position.y));
+        Gizmos.DrawLine(transform.position,new Vector3(transform.position.x + playerCheckDistance* facingDirection,transform.position.y));
     }
 }
