@@ -13,19 +13,23 @@ public class PlayerState
     protected float yInput;
     protected float stateTimer;
 
+    protected bool isTiggerCalled;
+
     public PlayerState(PlayerStateMachine stateMachine, Player player, string animBoolName)
     {
         this.stateMachine = stateMachine;
         this.player = player;
         this.animBoolName = animBoolName;
+        isTiggerCalled = false;
     }
 
 
     public virtual void Enter()
     {
         Debug.Log("I enter " + animBoolName);
-        rb = player.rb;
         player.anim.SetBool(animBoolName, true);
+        rb = player.rb;
+        isTiggerCalled = false;
     }
     public virtual void Update()
     {
@@ -41,5 +45,10 @@ public class PlayerState
     {
         Debug.Log("I exit " + animBoolName);
         player.anim.SetBool(animBoolName, false);
+    }
+    
+    public virtual void AnimationFinitionTigger()
+    {
+        isTiggerCalled = true;
     }
 }

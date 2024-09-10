@@ -12,6 +12,7 @@ public class Player : Entity
     public PlayerDashState dashState { get; private set; }
     public PlayerWallSlideState wallSlideState { get; private set; }
     public PlayerWallJumpState wallJumpState { get; private set; }
+    public PlayerPrimaryAttackState primaryAttackState { get; private set; }
     #endregion
    
 
@@ -30,10 +31,7 @@ public class Player : Entity
     public float wallJumpDuration; 
 
     [Header("Attack Info")] 
-    [SerializeField] private float comboTimer; 
-    private float _comboTimeWindow;
-    private bool _isAttacking;
-    private int _comboCounter;
+    public float comboWindow; //how many time should pass before combo 
     
 
     private void Awake()
@@ -45,7 +43,8 @@ public class Player : Entity
         airState = new PlayerAirState(stateMachine, this, "jump");
         dashState = new PlayerDashState(stateMachine, this, "dash");
         wallSlideState = new PlayerWallSlideState(stateMachine, this, "wallSlide");
-        wallJumpState = new PlayerWallJumpState(stateMachine, this, "Jump");
+        wallJumpState = new PlayerWallJumpState(stateMachine, this, "jump");
+        primaryAttackState = new PlayerPrimaryAttackState(stateMachine, this, "attack");
     }
     
  
@@ -64,27 +63,8 @@ public class Player : Entity
     }
     
 
-    public void AttackOver()
-    {
-        _isAttacking = false;
-        
-        _comboCounter++;
-
-        if (_comboCounter > 2)
-        {
-            _comboCounter = 0;
-        }
-        
-    }
+    public void AnimatonTrigger() => stateMachine.currentState.AnimationFinitionTigger();
     
-
-    private void CheckInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            StartAttackEvent();
-        }
-    }
 
     private void CheckDashInput()
     {
@@ -104,30 +84,8 @@ public class Player : Entity
             stateMachine.ChangeState(dashState);
         }
     }
-
-    private void StartAttackEvent()
-    {
-        if (isGroundDetected())
-        {
-            return;
-        }
-        if (_comboTimeWindow < 0)
-        {
-            _comboCounter = 0;
-        }
-            
-        _isAttacking = true;
-        _comboTimeWindow = comboTimer;
-    }
     
-
-    private void AnimatorControllers()
-    {
-        
-        anim.SetBool("isAttacking",_isAttacking);
-        anim.SetInteger("comboCounter", _comboCounter);
-  
-    }
+    
     
 
     private void FlipController(float x)
